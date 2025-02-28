@@ -19,7 +19,7 @@ class LessonAdmin(admin.ModelAdmin):
 
     def image_view(self, lesson):
         if lesson:
-            return mark_safe(f"<img src='/media/{lesson.image.name}' width='400'/>")
+            return mark_safe(f"<img src='/{lesson.image.name}' width='400'/>")
 
     class Media:
         css = {
