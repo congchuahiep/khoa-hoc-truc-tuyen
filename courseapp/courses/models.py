@@ -28,7 +28,7 @@ class Category(BaseModel):
 class Course(BaseModel):
     subject = models.CharField(max_length=100)
     description = models.CharField(max_length=255)
-    image = models.ImageField(upload_to="courses/%Y/%m", null=True, blank=True)
+    image = models.ImageField(upload_to="courses/%Y/%m/", null=True, blank=True)
     category = models.ForeignKey(Category, on_delete=models.PROTECT)
 
     def __str__(self):
@@ -38,7 +38,7 @@ class Course(BaseModel):
 class Lesson(BaseModel):
     subject = models.CharField(max_length=255)
     content = models.TextField()
-    image = models.ImageField(upload_to="lesson/%Y/%m", null=True, blank=True)
+    image = models.ImageField(upload_to="lesson/%Y/%m/", null=True, blank=True)
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
 
     def __str__(self):
