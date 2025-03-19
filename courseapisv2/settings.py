@@ -11,6 +11,12 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+from dotenv import load_dotenv
+import os
+
+# Load .env file for API key
+load_dotenv()
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -49,7 +55,6 @@ INSTALLED_APPS = [
 # cloudinary configuration
 import cloudinary
 import cloudinary.uploader
-from cloudinary.utils import cloudinary_url
 cloudinary.config(
     cloud_name = "dmt4mvjdx",
     api_key = "344596978848947",
@@ -96,10 +101,11 @@ WSGI_APPLICATION = 'courseapisv2.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'coursedb',
-        'USER': 'root',
-        'PASSWORD': 'root',
-        'HOST': '' # mặc định localhost
+        "NAME": os.getenv("DB_NAME"),
+        'USER': os.getenv("DB_USER"),
+        "PASSWORD": os.getenv("DB_PASSWORD"),
+        "HOST": os.getenv("DB_HOST"),
+        "PORT": os.getenv("DB_PORT")
     }
 }
 
