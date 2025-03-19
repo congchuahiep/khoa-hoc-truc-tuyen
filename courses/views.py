@@ -13,11 +13,11 @@ from .serializers import CategorySerializer, CourseSerializer, LessonSerializer,
 # Use RetrieveAPIView for detail view
 
 
-class CategoryViewSet(viewsets.ModelViewSet, generics.ListAPIView):
+class CategoryViewSet(viewsets.ViewSet, generics.ListAPIView):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
 
-class CourseViewSet(viewsets.ModelViewSet, generics.ListAPIView):
+class CourseViewSet(viewsets.ViewSet, generics.ListAPIView):
     queryset = Course.objects.all()
     serializer_class = CourseSerializer
     pagination_class = paginators.ItemPagination
@@ -44,7 +44,7 @@ class CourseViewSet(viewsets.ModelViewSet, generics.ListAPIView):
         return Response(LessonSerializer(lesson, many=True).data, status=rest_framework.status.HTTP_200_OK)
 
 
-class LessonViewSet(viewsets.ModelViewSet, generics.RetrieveAPIView):
+class LessonViewSet(viewsets.ViewSet, generics.RetrieveAPIView):
     queryset = Lesson.objects.prefetch_related('tags').filter(active=True)
     serializer_class = LessonDetailSerializer
 
