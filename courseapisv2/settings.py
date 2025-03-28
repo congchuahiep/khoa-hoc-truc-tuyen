@@ -59,6 +59,7 @@ REST_FRAMEWORK = {
     )
 }
 
+# Add support for User Json
 OAUTH2_PROVIDER = { 'OAUTH2_BACKEND_CLASS': 'oauth2_provider.oauth2_backends.JSONOAuthLibCore' }
 
 # cloudinary configuration

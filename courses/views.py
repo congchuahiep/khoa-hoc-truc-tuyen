@@ -1,12 +1,12 @@
-from rest_framework import viewsets, permissions, generics
+from rest_framework import viewsets, permissions, generics, parsers
 from rest_framework.response import Response
 import rest_framework.status
 from rest_framework.decorators import action
 
 from courses import paginators
-from .models import Category, Course, Lesson, Comment
+from .models import Category, Course, Lesson, User
 from .serializers import CategorySerializer, CourseSerializer, LessonSerializer, LessonDetailSerializer, \
-    CommentSerializer
+    CommentSerializer, UserSerializer
 
 
 # Use ListAPIView for listing view
@@ -54,3 +54,24 @@ class LessonViewSet(viewsets.ViewSet, generics.RetrieveAPIView):
         # idk select_related does??!???
         comment = self.get_object().comment_set.select_related('user').filter(active=True)
         return Response(CommentSerializer(comment, many=True).data, status=rest_framework.status.HTTP_200_OK)
+
+
+class UserViewSet(viewsets.ViewSet, generics.ListAPIView):
+    query = User.objects.filter(is_active=True)
+    serializer_class = UserSerializer
+    parser_classes = [parsers.MultiPartParser]
+    
+    @action(methods=['get', 'patch'], url_path="current-user", detail=False, permission_classes=[permissions.IsAuthenticated])
+    def get_current_user(self, request):
+        user = request.user
+        
+        if request.method.__eq__('PATCH'):
+            for key, value in request.data.items():
+                if key in ["first_name", "last_name"]:
+                    setattr(user, key, value) # ~ user.key = value
+                elif key.__eq__("password"):
+                    user.set_password(value)
+                
+            user.save()
+        
+        return Response(UserSerializer(user).data)
