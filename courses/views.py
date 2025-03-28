@@ -37,7 +37,7 @@ class CourseViewSet(viewsets.ViewSet, generics.ListAPIView):
 
         return query
 
-    # make a detail child url like /courses/{course_id}/lessons/?q=
+    # make a detail child url like /courses/{course_id}/lessons/
     @action(methods=['get'], detail=True, url_name='lessons')
     def get_lessons(self, request, pk):
         lesson = self.get_object().lesson_set.filter(active=True)
@@ -47,10 +47,36 @@ class CourseViewSet(viewsets.ViewSet, generics.ListAPIView):
 class LessonViewSet(viewsets.ViewSet, generics.RetrieveAPIView):
     queryset = Lesson.objects.prefetch_related('tags').filter(active=True)
     serializer_class = LessonDetailSerializer
+    
+    # custom permission
+    def get_permissions(self):
+        '''
+        only user have IsAuthenticated permission can be access to:
+        POST:/lesson/{lesson_id}/comments/ action
+        '''
+        if self.action in ['get_comments'] and self.request.method.__eq__('POST'):
+            return [permissions.IsAuthenticated()]
+        
+        # other action can be used by anyone
+        return [permissions.AllowAny()]
 
-    # make a detail child url like /courses/{course_id}/lessons/?q=
-    @action(methods=['get'], detail=True, url_name='comments')
+    # make a detail child url like /lessons/{lesson_id}/comments/
+    @action(methods=['get', 'post'], detail=True, url_path='comments')
     def get_comments(self, request, pk):
+        
+        # POST method: Create comment object
+        if request.method.__eq__("POST"):
+            serializer = CommentSerializer(data={
+                'user': request.user.pk,                # user primarykey
+                'lesson': pk,                           # lesson primarykey
+                'content': request.data.get('content')  # content data
+            })
+            serializer.is_valid() # validate comment data
+            
+            comment = serializer.save()
+            return Response(CommentSerializer(comment).data, status=rest_framework.status.HTTP_201_CREATED)
+        
+        
         # idk select_related does??!???
         comment = self.get_object().comment_set.select_related('user').filter(active=True)
         return Response(CommentSerializer(comment, many=True).data, status=rest_framework.status.HTTP_200_OK)
