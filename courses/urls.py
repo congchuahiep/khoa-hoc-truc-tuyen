@@ -1,8 +1,6 @@
-from django.urls import path, include, re_path
+from django.urls import path, include
 from . import views
 from rest_framework import routers
-
-from .admin import admin_site
 
 # register url route
 router = routers.DefaultRouter()
