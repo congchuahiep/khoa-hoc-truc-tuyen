@@ -54,6 +54,7 @@ class MyUserAdmin(admin.ModelAdmin):
     list_display = ["status_display", "username", "email"]
     search_fields = ["username", "email"]
     list_filter = ["is_active", "date_joined"]
+    sortable_by = ["username"]
 
     fieldsets = [
         ("Thông tin cá nhân", {"fields": ["status_display", "username", "email", "avatar_view"]}),
